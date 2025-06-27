@@ -17,12 +17,33 @@ export default function Cart({setCustomer,setSeller}) {
   useEffect(() => {
     const getProducts=async () =>{
       try {
-        const data = await fetchCartItems();
-        setProducts(data);
-        setCount(data.length)
-        const allOrders=await fetchCustomerOrders()
-        setOrders(allOrders)
-        setOrderCount(allOrders.length)
+        const response = await fetchCartItems();
+        if(Array.isArray(response)){
+            setProducts(response);
+            setCount(response.length)
+        }
+        else if (response.products && Array.isArray(response.products)){
+            setProducts(response.products);
+            setCount(response.products.length)
+        }
+        else{
+            setProducts([]);
+            setCount(null);
+        }
+        const res=await fetchCustomerOrders()
+        if(Array.isArray(res)){
+            setOrders(res);
+            setOrderCount(res.length)
+        }
+        else if (res.orders && Array.isArray(res.orders)){
+            setOrders(res.orders)
+            setOrderCount(res.orders.length)
+            
+        }
+        else{
+            setOrders([]);
+            setOrderCount(null);
+        }
       } catch (err) {
         alert(err.message);
       }
@@ -36,8 +57,8 @@ export default function Cart({setCustomer,setSeller}) {
     document.body.style.overflow = productId ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
   }, [productId]);
-  const selectedItem = products.find((p)=>p.id===activeId)
-  const selectedProduct = products.find((p) => p.id === productId);
+  const selectedItem = (products.length>0)?products.find((p)=>p.id===activeId):null
+  const selectedProduct = (products.length>0)?products.find((p) => p.id === productId):null
 
   async function deleteItem(id) {
 
@@ -139,7 +160,7 @@ export default function Cart({setCustomer,setSeller}) {
         >
         
         
-        {productId || activeId && (
+        {productId && activeId && (
             <div
             onClick={() => setProductId(null)}
             style={{

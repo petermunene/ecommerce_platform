@@ -10,12 +10,28 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const data = await fetchProducts();
-        console.log("Fetched products:", data);
-        setAllProducts(data); // correctly updating the state
-        setProducts(data);
+        const response = await fetchProducts();
+        
+        // Check if response is an array (direct products list)
+        if (Array.isArray(response)) {
+          setAllProducts(response);
+          setProducts(response);
+        } 
+        // Handle object response with products array
+        else if (response.products && Array.isArray(response.products)) {
+          setAllProducts(response.products);
+          setProducts(response.products);
+        }
+        // Handle unexpected format
+        else {
+          console.error("Unexpected API response:", response);
+          setAllProducts([]);
+          setProducts([]);
+        }
       } catch (err) {
         alert(err.message);
+        setAllProducts([]);
+        setProducts([]);
       }
     };
   
@@ -49,7 +65,7 @@ export default function Dashboard() {
     return () => (document.body.style.overflow = "auto");
   }, [productId]);
 
-  const selectedProduct = Array.isArray(products)
+  const selectedProduct =(products.length>0)
   ? products.find((p) => p.id === productId)
   : null;
   async function handleFilter(search){

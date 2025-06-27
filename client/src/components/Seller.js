@@ -20,16 +20,35 @@ export default function Seller({setSeller}) {
   useEffect(() => {
     const fetchSellerData = async () => {
       try {
-        const data = await fetchSellerProducts();
-        console.log("Fetched products:", data);
-        setFilteredProducts(data); // correctly updating the state
-        setProducts(data);
-
-
-        const all_orders = await fetchSellerOrders();
-        console.log("Fetched orders:", all_orders);
-        setFilteredOrders(all_orders); // correctly updating the state
-        setSellersOrders(all_orders);
+        const response = await fetchSellerProducts();
+        
+        if(Array.isArray(response)){
+            setProducts(response);
+            setFilteredProducts(response)
+        }
+        else if (response.products && Array.isArray(response.products)){
+            setProducts(response.products);
+            setFilteredProducts(response.products.length)
+        }
+        else{
+            setProducts([]);
+            setFilteredProducts([]);
+        }
+        const res= await fetchSellerOrders();
+        
+        if(Array.isArray(res)){
+            setSellersOrders(res);
+            setFilteredOrders(res)
+        }
+        else if (res.orders && Array.isArray(res.orders)){
+            setSellersOrders(res.orders)
+            setFilteredOrders(res.orders.length)
+            
+        }
+        else{
+            setSellersOrders([]);
+            setFilteredOrders([]);
+        }
       } catch (err) {
         alert(err.message);
       }
