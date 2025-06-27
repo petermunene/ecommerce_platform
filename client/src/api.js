@@ -1,19 +1,23 @@
-const API_BASE = "http://localhost:5000";
+const API_BASE="http://localhost:5000";
 
-async function request(endpoint, method="GET", body=null, token=null) {
-  const headers = {
-    "Content-Type": "application/json",
-  };
-  if(token) headers["Authorization"] = `Bearer ${token}`;
-  const res = await fetch(`${API_BASE}${endpoint}`, {
-    method,
-    headers,
-    credentials: 'include', // for cookies if backend sets them
-    body: body ? JSON.stringify(body) : null,
-  });
-  const data = await res.json().catch(() => ({}));
-  if(!res.ok) throw new Error(data.error || "API Error");
-  return data;
+async function request(endpoint, method="GET", body=null ) {
+    const headers = {
+        'Content-Type':'application/json'
+    }
+    const res = await fetch(`${API_BASE}${endpoint}`,{
+        method,
+        headers,
+        body:body ? JSON.stringify(body):null,
+        credentials:'include'
+    })
+    const data= await res.json().catch (()=>({}))
+    if (res.ok){
+        return data
+    }
+    else{
+        return { error :data.error || 'error with fetch request'}
+    }
+    
 }
 
 export async function customerSignup(username, password) {
