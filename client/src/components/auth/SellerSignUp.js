@@ -1,23 +1,23 @@
 import React, { useState } from "react";
-import { customerSignup } from "../../api";
+import { sellerSignup } from "../../api";
 
-export default function CustomerSignup() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMsg] = useState("");
+export default function SellerSignup() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMsg] = useState('');
 
-  async function handleSubmit(e) {
+  async function handleOnSubmit(e) {
     e.preventDefault();
     try {
-      await customerSignup(username, password);
-      setMsg("Signup successful! Please login.");
+      const res = await sellerSignup(username, password);
+      setMsg(res.message);
     } catch (err) {
       setMsg(err.message);
     }
   }
 
   return (
-<div
+    <div
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -37,8 +37,8 @@ export default function CustomerSignup() {
           height:'400px'
         }}
       >
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' , gap:'20px'}}>
-          <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>Customer Signup</h2>
+        <form onSubmit={handleOnSubmit} style={{ display: 'flex', flexDirection: 'column' , gap:'20px'}}>
+          <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>Seller Signup</h2>
 
           <input
             name="username"
