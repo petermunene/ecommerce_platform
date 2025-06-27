@@ -1,109 +1,99 @@
-from app import app, db, bcrypt
+from app import app, db
 from models import Customer, Seller, Product, Order, CartItem
+from sqlalchemy import text  # Needed for raw SQL commands
 
-with app.app_context():
-    # Clear existing data
-    print("Clearing database...")
-    CartItem.query.delete()
-    Order.query.delete()
-    Product.query.delete()
-    Seller.query.delete()
-    Customer.query.delete()
-    db.session.commit()
+def seed_data():
+    with app.app_context():
+        print("🌱 Seeding data...")
 
-    print("Seeding sellers...")
-    seller1 = Seller(username="nairobi_shoes")
-    seller1.hash_password = "shoes123"
+        # Reset tables
+        db.session.query(Order).delete()
+        db.session.query(CartItem).delete()
+        db.session.query(Product).delete()
+        db.session.query(Customer).delete()
+        db.session.query(Seller).delete()
+        db.session.commit()
 
-    seller2 = Seller(username="munene_electronics")
-    seller2.hash_password = "tech456"
+        # Reset primary key sequences
+        db.session.execute(text("ALTER SEQUENCE customers_id_seq RESTART WITH 1"))
+        db.session.execute(text("ALTER SEQUENCE sellers_id_seq RESTART WITH 1"))
+        db.session.execute(text("ALTER SEQUENCE products_id_seq RESTART WITH 1"))
+        db.session.execute(text("ALTER SEQUENCE orders_id_seq RESTART WITH 1"))
+        db.session.execute(text("ALTER SEQUENCE cart_items_id_seq RESTART WITH 1"))
+        db.session.commit()
 
-    db.session.add_all([seller1, seller2])
-    db.session.commit()
+        # Create Sellers
+        seller1 = Seller(username="seller1")
+        seller1.hash_password = "password123"
 
-    print("Seeding products (no image_url)...")
-    product1 = Product(
-        product_name="Air Max Sneakers",
-        description="Trendy sneakers for sports and casual wear.",
-        quantity=10,
-        price=5999.99,
-        seller_id=seller1.id
-        # no image_url
-    )
+        seller2 = Seller(username="seller2")
+        seller2.hash_password = "password456"
 
-    product2 = Product(
-        product_name="Bluetooth Speaker",
-        description="Portable wireless speaker with deep bass.",
-        quantity=5,
-        price=3499.50,
-        seller_id=seller2.id
-        # no image_url
-    )
+        db.session.add_all([seller1, seller2])
+        db.session.commit()
 
-    product3 = Product(
-        product_name="Running Shoes",
-        description="Lightweight and breathable running shoes.",
-        quantity=20,
-        price=4499.00,
-        seller_id=seller1.id
-        # no image_url
-    )
+        # Create Customers
+        customer1 = Customer(username="customer1")
+        customer1.hash_password = "cust123"
 
-    db.session.add_all([product1, product2, product3])
-    db.session.commit()
+        customer2 = Customer(username="customer2")
+        customer2.hash_password = "cust456"
 
-    print("Seeding customers...")
-    customer1 = Customer(username="johndoe")
-    customer1.hash_password = "doepass"
+        db.session.add_all([customer1, customer2])
+        db.session.commit()
 
-    customer2 = Customer(username="janedoe")
-    customer2.hash_password = "janepass"
+        # Create Products
+        product1 = Product(
+            product_name="Laptop",
+            description="A fast laptop",
+            quantity=10,
+            price=1500.00,
+            image_url="/images/shopping.png",
+            contact="0712345678",
+            seller_id=seller1.id
+        )
 
-    db.session.add_all([customer1, customer2])
-    db.session.commit()
+        product2 = Product(
+            product_name="Headphones",
+            description="Noise cancelling",
+            quantity=25,
+            price=200.00,
+            image_url="/images/shopping.png",
+            contact="0798765432",
+            seller_id=seller2.id
+        )
 
-    print("Seeding orders (no image_url)...")
-    order1 = Order(
-        product_name=product1.product_name,
-        amount=2,
-        price=product1.price,
-        customer_id=customer1.id,
-        product_id=product1.id
-        # no image_url
-    )
+        db.session.add_all([product1, product2])
+        db.session.commit()
 
-    order2 = Order(
-        product_name=product2.product_name,
-        amount=1,
-        price=product2.price,
-        customer_id=customer1.id,
-        product_id=product2.id
-        # no image_url
-    )
+        # Create Orders
+        order1 = Order(
+            product_name=product1.product_name,
+            amount=1,
+            price=product1.price,
+            contact="0712345678",
+            image_url=product1.image_url,
+            customer_id=customer1.id,
+            product_id=product1.id
+        )
 
-    db.session.add_all([order1, order2])
-    db.session.commit()
+        db.session.add(order1)
 
-    print("Seeding cart items (no image_url)...")
-    cart_item1 = CartItem(
-        product_name=product3.product_name,
-        amount=3,
-        price=product3.price,
-        customer_id=customer2.id,
-        product_id=product3.id
-        # no image_url
-    )
+        # Create CartItems
+        cart_item1 = CartItem(
+            product_name=product2.product_name,
+            amount=2,
+            price=product2.price,
+            contact="0798765432",
+            image_url=product2.image_url,
+            customer_id=customer2.id,
+            product_id=product2.id
+        )
 
-    cart_item2 = CartItem(
-        product_name=product2.product_name,
-        amount=1,
-        price=product2.price,
-        customer_id=customer2.id,
-        product_id=product2.id
-        # no image_url
-    )
+        db.session.add(cart_item1)
+        db.session.commit()
 
-    db.session.add_all([cart_item1, cart_item2])
-    db.session.commit()
+        print("✅ Seeding complete.")
 
-    print("✅ Seeding complete!")
+if __name__ == "__main__":
+    seed_data()

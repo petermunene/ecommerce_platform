@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { fetchProducts } from "../api";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-export default function NavBar({setProducts,count,orderCount}) {
+export default function NavBar({setProducts }) {
   const [search,setSearch]=useState('')
   const [showOptions, setShowOptions] = useState(false);
   const [hover,setHover]=useState(false)
+  const [customer, setCustomer] = useState(localStorage.getItem("customer") === "true");
+  const [seller,setSeller]=useState(localStorage.getItem("seller") === "true")
   const Navigate=useNavigate()
   const dropdownItemStyle = {
     padding: '12px 16px',
@@ -19,6 +20,22 @@ export default function NavBar({setProducts,count,orderCount}) {
     ...dropdownItemStyle,
     backgroundColor: '#f0f0f0',
   };
+  function checkIfCustomerLoggedin(){
+    if (customer){
+        Navigate('/cart')
+    }
+    else{
+        Navigate('/customerLogin')
+    }
+  }
+  function checkIfSellerLoggedin(){
+    if(seller){
+        Navigate('/seller')
+    }
+    else{
+        Navigate('/sellerLogin')
+    }
+  }
   async function filter(search) {
     try{
      setSearch(search)
@@ -64,9 +81,10 @@ export default function NavBar({setProducts,count,orderCount}) {
           }}
       />
       <div style={{gap:'5 px'}}>
-        <Link to= '/Cart'
-          onClick={() => setShowOptions(!showOptions)}
+        <h4
+          onClick={checkIfCustomerLoggedin}
           style={{
+            cursor:'pointer',
             color: '#333',
             textDecoration: 'none',
             padding: '8px 16px',
@@ -78,12 +96,13 @@ export default function NavBar({setProducts,count,orderCount}) {
             transition: 'background 0.3s',
           }}
         >
-          cart: {count}
-        </Link> 
+          My Activity
+        </h4> 
               
-        <Link to='/Order'
-          onClick={() => setShowOptions(!showOptions)}
+        <h4
+          onClick={checkIfSellerLoggedin}
           style={{
+            cursor:'pointer',
             color: '#333',
             textDecoration: 'none',
             padding: '8px 16px',
@@ -95,8 +114,8 @@ export default function NavBar({setProducts,count,orderCount}) {
             transition: 'background 0.3s',
           }}
         >
-          orders: {orderCount}
-        </Link>
+          My Shop
+        </h4>
      </div>
      
       <div style={{ position: 'relative' }}>

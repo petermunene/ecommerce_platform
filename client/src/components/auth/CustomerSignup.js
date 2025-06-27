@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import { customerSignup } from "../../api";
-
-export default function CustomerSignup() {
+import { useNavigate } from "react-router-dom";
+export default function CustomerSignup({setCustomer}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMsg] = useState("");
-
+  const Navigate=useNavigate()
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      await customerSignup(username, password);
-      setMsg("Signup successful! Please login.");
+      const res=await customerSignup(username, password);
+      const msg='sign-up succesiful'
+      setMsg(msg)
+      if (msg){
+        localStorage.removeItem("customer");
+        localStorage.setItem("customer", "true");
+        setCustomer(true)
+        Navigate('/cart')
+      }
     } catch (err) {
-      setMsg(err.message);
+      alert(err.message);
     }
   }
 

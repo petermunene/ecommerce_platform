@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import { customerLogin } from "../../api";
-
-export default function CustomerLogin() {
+import { Link, useNavigate } from "react-router-dom";
+export default function CustomerLogin({setCustomer}) {
   const[username,setUsername]=useState('')
   const[password,setPassword]=useState('')
   const[message,setMsg]=useState('')
+  const Navigate=useNavigate()
   async function handleOnSubmit(e){
     e.preventDefault()
    try{
     const res =await customerLogin(username,password)
-    setMsg(res.message)
+    const msg = ('Login succesiful')
+   if (msg){
+    localStorage.removeItem("customer");
+    localStorage.setItem("customer", "true");
+    setCustomer(true)
+    Navigate('/cart')
+   }
    } 
     catch(err){
-        setMsg(err.message)
+        alert(err.message)
     }
 
   }
@@ -86,6 +93,7 @@ export default function CustomerLogin() {
           >
             Login
           </button>
+          <Link to='/customerSignup'>don't have an account ? SignUp</Link>
         </form>
       </div>
     </div>

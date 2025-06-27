@@ -1,16 +1,25 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { sellerLogin } from "../../api";
-
-export default function SellerLogin() {
+import { useNavigate } from "react-router-dom";
+export default function SellerLogin({setSeller}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMsg] = useState('');
-
+  const Navigate = useNavigate()
   async function handleOnSubmit(e) {
     e.preventDefault();
     try {
       const res = await sellerLogin(username, password);
-      setMsg(res.message);
+      const msg='Sign-Up succesiful'   
+      setMsg(msg)  
+     if (msg){
+      localStorage.removeItem("seller")
+      localStorage.setItem("seller", "true")
+      setSeller(true)
+      Navigate('/seller')
+     }
+       
     } catch (err) {
       setMsg(err.message);
     }
@@ -86,6 +95,7 @@ export default function SellerLogin() {
           >
             Login
           </button>
+          <Link to='/SellerSignup'>don't have an account ? SignUp</Link>
         </form>
       </div>
     </div>

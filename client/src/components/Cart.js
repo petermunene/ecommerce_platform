@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { deleteCartItem, fetchCartItems, fetchCustomerOrders, placeOrder } from "../api";
+import { deleteCartItem,customerLogout, fetchCartItems, fetchCustomerOrders, placeOrder, sellerLogout } from "../api";
 import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
-export default function Cart() {
+export default function Cart({setCustomer,setSeller}) {
   const [products, setProducts] = useState([]);
   const [productId, setProductId] = useState(null);
   const [allproducts, setAllProducts]=useState([])
@@ -12,6 +12,7 @@ export default function Cart() {
   const [orders,setOrders]=useState([])
   const [count,setCount]=useState(0)
   const [orderCount,setOrderCount]=useState(0)
+  const [contact,setContact]=useState('')
   const Navigate =useNavigate()
   useEffect(() => {
     const getProducts=async () =>{
@@ -53,46 +54,64 @@ export default function Cart() {
       alert("Unable to delete item: " + err.message);
     }
   }
-  async function addOrder(product){
-    try {
-        const order = {
-          product_name: product.product_name,
-          amount: 1,
-          price: product.price,
-          product_id: product.id,
-          image_url: product.image_url,
-        };
+//   async function addOrder(product){
+//     try {
+//         const order = {
+//           product_name: product.product_name,
+//           amount: 1,
+//           price: product.price,
+//           product_id: product.id,
+//           image_url: product.image_url,
+//         };
     
-        const res = await placeOrder(order);
-        const updatedOrders = await fetchCustomerOrders();
-        setOrders(updatedOrders);
-        setOrderCount(updatedOrders.length)
-        if (res.error) {
-          alert(res.error);
-        } 
-      } catch (err) {
-        alert("Something went wrong: " + err.message);
-      }
+//         const res = await placeOrder(order);
+//         const updatedOrders = await fetchCustomerOrders();
+//         setOrders(updatedOrders);
+//         setOrderCount(updatedOrders.length)
+//         if (res.error) {
+//           alert(res.error);
+//         } 
+//       } catch (err) {
+//         alert("Something went wrong: " + err.message);
+//       }
+//   }
+  const handleLogout = () => {
+    localStorage.removeItem("customer");
+    localStorage.removeItem('seller')
+    sellerLogout()
+    customerLogout()
+    setCustomer(false);
+    setSeller(false)
+    Navigate('/');
   }
   return (
     <>
-    <NavBar orderCount={orderCount} count={count} setProducts={setProducts} />
-      <div style={{backgroundColor:'darkgreen'}}>
+    <NavBar  setProducts={setProducts} />
+      <div style={{backgroundColor:'darkblue'}}>
          <div className="category-filter" >
                 <ul>
+                <li
+                    className="filter-item"
+                    style={{
+                        backgroundColor: 'darkred',
+                        color:'white'
+                    }}
+                     onClick={handleLogout}>
+                        Log Out
+                    </li>
                     {[
-                    'CartItems', 'Orders','DashBoard'
+                    `CartItems : ${count}`, `Orders : ${orderCount}`,'DashBoard'
                     ].map((category) => (
                     <li
                         key={category}
                         onClick={() =>{
-                            if(category.toLowerCase() === 'cartitems'){
+                            if(category.toLowerCase().startsWith('cartitems')){
                                 setViewOrders(false)
                             }
-                            else if (category.toLowerCase() === 'orders'){
+                            else if (category.toLowerCase().startsWith('orders')){
                                 setViewOrders(true)
                             }
-                            else{
+                            else if (category.toLowerCase()==='dashboard'){
                                 Navigate('/')
                             }
                         }
@@ -170,7 +189,7 @@ export default function Cart() {
                 ) : (
                     <p>No orders found.</p>
                 )
-                ) : (
+                ) : (products.length > 0 ?(
                     products.map((product) => (
                         <div
                         key={product.id}
@@ -245,7 +264,7 @@ export default function Cart() {
                         </button>
                         </div>
                     ))
-                )}
+                ) : (<p>no products found</p>))}
            
         {activeId && selectedItem && (
             <div
@@ -268,16 +287,20 @@ export default function Cart() {
                     e.preventDefault();
                     const orderData = {
                     product_name: selectedItem.product_name,
+                    contact:selectedItem.contact,
                     amount: quantity,
+                    contact: contact,
                     price: (quantity * selectedItem.price).toFixed(2),
                     image_url: selectedItem.image_url,
                     product_id: selectedItem.id,
+                    
                     };
                     try {
                     await placeOrder(orderData);
                     alert("Order placed successfully!");
-                    const updated = await fetchCartItems();
-                    setProducts(updated);
+                    const updated = await fetchCustomerOrders();
+                    setOrders(updated);
+                    setOrderCount(updated.length)
                     setActiveId(null);
                     } catch (err) {
                     alert("Order failed: " + err.message);
@@ -296,10 +319,20 @@ export default function Cart() {
                     max={selectedItem.amount}
                     style={{ marginLeft: "10px", padding: "5px", width: "60px" }}
                     />
+                </label> <br/><br/>
+                <label>
+                    Contact:
+                    <input
+                    required
+                    type="text"
+                    value={contact}
+                    onChange={(e) => setContact(parseInt(e.target.value))}
+                    style={{ marginLeft: "10px", padding: "5px", width: "70px" }}
+                    />
                 </label>
                 <p><strong>Total:</strong> Ksh {(quantity * selectedItem.price).toFixed(2)}</p>
                 <button
-                    onClick={()=>{addOrder(selectedItem)}}
+                    // onClick={()=>{addOrder(selectedItem)}}
                     type="submit"
                     style={{
                     padding: "8px 12px",
@@ -367,7 +400,7 @@ export default function Cart() {
                 }}
             />
             <div style={{ flex: 1 }}>
-                <h2>{selectedProduct.name}</h2>
+                <h2>{selectedProduct.product_name}</h2>
                 <p style={{ fontSize: "1rem", color: "#555" }}>
                 {selectedProduct.description}
                 </p>

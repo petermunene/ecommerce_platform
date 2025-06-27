@@ -6,6 +6,7 @@ export default function Dashboard() {
   const [productId, setProductId] = useState(null);
   const [allproducts, setAllProducts]=useState([])
   const [inCart,setInCart]= useState(false)
+  const [active,setActive]=useState(null)
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
@@ -153,20 +154,39 @@ export default function Dashboard() {
             <h3>
                 <b style={{ color: "darkgreen" }}>ksh</b>: {product.price}
             </h3>
-            <button
-                onClick={()=>{addToCart(product);setInCart(true)}}
-                style={{
-                    marginTop: '10px',
-                    padding: '8px 12px',
-                    backgroundColor: 'darkgreen',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                }}
+            {!inCart ? (           
+                <button
+                    onClick={() => {
+                       try{
+                        const res=addToCart(product);
+                        if (res.success){
+                            setInCart(true);
+                            setActive(product.id);
+                        }
+                       }catch{
+                          setInCart(false)
+                       }
+                    }}
+                    style={{
+                        marginTop: '10px',
+                        padding: '8px 12px',
+                        backgroundColor: 'darkgreen',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                    }}
                 >
-                Add to Cart
-            </button>
+                    Add to Cart
+                </button>
+            ) : (
+                active === product.id && (
+                    <p style={{ marginTop: '10px', color: 'green', fontWeight: 'bold' }}>In Cart</p>
+                )
+            )}
+            <h3>
+                <b style={{ color: "darkgreen" }}>contact</b>: 0{product.contact}
+            </h3>
             </div>
         ))}
 

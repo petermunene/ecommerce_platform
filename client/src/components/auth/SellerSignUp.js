@@ -1,16 +1,23 @@
 import React, { useState } from "react";
 import { sellerSignup } from "../../api";
-
-export default function SellerSignup() {
+import { useNavigate } from "react-router-dom";
+export default function SellerSignup({setSeller}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMsg] = useState('');
-
+  const Navigate = useNavigate()
   async function handleOnSubmit(e) {
     e.preventDefault();
     try {
       const res = await sellerSignup(username, password);
-      setMsg(res.message);
+      const msg='sign-up succesifull'
+      setMsg(msg)
+      if (msg){
+        localStorage.removeItem("seller");
+        localStorage.setItem("seller", "true");
+        setSeller(true)
+        Navigate('/seller')
+      }
     } catch (err) {
       setMsg(err.message);
     }
