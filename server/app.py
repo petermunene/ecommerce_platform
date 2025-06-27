@@ -9,6 +9,9 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "muriukimunene"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+
 CORS(app, supports_credentials=True)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
