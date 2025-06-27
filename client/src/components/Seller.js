@@ -15,6 +15,7 @@ export default function Seller({setSeller}) {
   const [quantity, setQuantity] = useState("");
   const [image_url, setImageUrl] = useState('/images/shopping.png');
   const [description,setDescription]=useState('')
+  const [contact,setContact]=useState('')
   
   const Navigate = useNavigate();
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function Seller({setSeller}) {
         }
         else if (res.orders && Array.isArray(res.orders)){
             setSellersOrders(res.orders)
-            setFilteredOrders(res.orders.length)
+            setFilteredOrders(res.orders)
             
         }
         else{
@@ -283,6 +284,7 @@ export default function Seller({setSeller}) {
                     onSubmit={async (e) => {
                         e.preventDefault();
                         const newProduct = {
+                        contact:contact,
                         product_name,
                         price: parseFloat(price),
                         quantity: parseInt(quantity),
@@ -346,6 +348,14 @@ export default function Seller({setSeller}) {
                         required
                         style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
                     />
+                     <input
+                        type="text"
+                        placeholder="phone No"
+                        value={selectedItem.contact}
+                        onChange={(e) => setContact(parseInt(e.target.value))}
+                        required
+                        style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+                    />
                     <input
                         type="text"
                         placeholder="Image URL"
@@ -406,6 +416,7 @@ export default function Seller({setSeller}) {
                         e.preventDefault();
                         const newProduct = {
                         product_name,
+                        contact:contact,
                         price: parseFloat(price),
                         quantity: parseInt(quantity),
                         description,
@@ -465,6 +476,15 @@ export default function Seller({setSeller}) {
                         placeholder="Quantity"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
+                        min={1}
+                        required
+                        style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+                    />
+                    <input
+                        type="text"
+                        placeholder="phone No"
+                        value={contact}
+                        onChange={(e) => setContact(parseInt(e.target.value))}
                         min={1}
                         required
                         style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}

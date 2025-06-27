@@ -28,7 +28,7 @@ export default function Cart({setCustomer,setSeller}) {
         }
         else{
             setProducts([]);
-            setCount(null);
+            setCount(0);
         }
         const res=await fetchCustomerOrders()
         if(Array.isArray(res)){
@@ -42,7 +42,7 @@ export default function Cart({setCustomer,setSeller}) {
         }
         else{
             setOrders([]);
-            setOrderCount(null);
+            setOrderCount(0);
         }
       } catch (err) {
         alert(err.message);
