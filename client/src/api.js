@@ -91,3 +91,6 @@ export async function updateCartItem(id, updates) {
 export async function deleteCartItem(id) {
   return request(`/cart_items/${id}`, "DELETE");
 }
+export async function deleteOrder(id){
+  return request(`/orders/${id}`,'DELETE');
+}

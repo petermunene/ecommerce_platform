@@ -19,6 +19,7 @@ class CustomerSignUp(Resource):
         db.session.add(new_customer)
         db.session.commit()
         session['customer_id']=new_customer.id
+        session.permanent = True
         return new_customer.to_dict(),201
 class SellerSignup(Resource):
     def post(self):
@@ -36,6 +37,7 @@ class SellerSignup(Resource):
         db.session.add(new_seller)
         db.session.commit()
         session['seller_id']=new_seller.id
+        session.permanent = True
         return new_seller.to_dict(),201
 class CustomerLogin(Resource):
     def post(self):
@@ -48,6 +50,7 @@ class CustomerLogin(Resource):
         if not user or not user.authenticate(password):
             return ({'error':'user not signed in '}),401
         session['customer_id']=user.id
+        session.permanent = True
         return user.to_dict(only=('id','username')),201
 class SellerLogin(Resource):
     def post(self):
@@ -60,6 +63,7 @@ class SellerLogin(Resource):
         if not user or not user.authenticate(password):
             return ({'error':'user not signed in '}),401
         session['seller_id']=user.id
+        session.permanent = True
         return user.to_dict(only=('id','username')),201
 class CustomerLogout(Resource):
     def get(self):

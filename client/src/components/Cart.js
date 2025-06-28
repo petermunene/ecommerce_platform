@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { deleteCartItem,customerLogout, fetchCartItems, fetchCustomerOrders, placeOrder, sellerLogout } from "../api";
+import { deleteCartItem,customerLogout, fetchCartItems, fetchCustomerOrders, placeOrder, sellerLogout, deleteOrder } from "../api";
 import NavBar from "./NavBar";
+import {  FaTimesCircle, FaSignOutAlt, FaCheckCircle } from "react-icons/fa";
+import { MdOutlineShoppingBag, MdCancel } from "react-icons/md";
+
 import { useNavigate } from "react-router-dom";
 export default function Cart({setCustomer,setSeller}) {
   const [products, setProducts] = useState([]);
@@ -118,7 +121,7 @@ export default function Cart({setCustomer,setSeller}) {
                         color:'white'
                     }}
                      onClick={handleLogout}>
-                        Log Out
+                       <FaSignOutAlt style={{ marginRight: '6px' }} /> Log Out
                     </li>
                     {[
                     `CartItems : ${count}`, `Orders : ${orderCount}`,'DashBoard'
@@ -204,7 +207,31 @@ export default function Cart({setCustomer,setSeller}) {
                         <h3>{order.product_name}</h3>
                         <p>Quantity: {order.amount}</p>
                         <p><strong>Total:</strong> Ksh {order.price}</p>
-                        
+                        <button
+                            onClick={async()=>{
+                                try {
+                                    await deleteOrder(order.id);
+                                    alert("Order placed successfully!");
+                                    const updated = await fetchCustomerOrders();
+                                    setOrders(updated);
+                                    setOrderCount(updated.length)
+                                    setActiveId(null);
+                                    } catch (err) {
+                                    alert("Order failed: " + err.message);
+                                    }
+                            }}
+                            style={{
+                                marginTop: '10px',
+                                padding: '8px 12px',
+                                backgroundColor: 'darkred',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                            }}
+                            >
+                        Cancel Order
+                        </button>                      
                     </div>
                     ))
                 ) : (
@@ -254,7 +281,10 @@ export default function Cart({setCustomer,setSeller}) {
                             <b style={{ color: "darkgreen" }}>ksh</b>: {product.price}
                         </h3>
                         <button
-                            onClick={()=>{deleteItem(product.id);alert(`${product.id}`)}}
+                            onClick={()=>
+                                deleteItem(product.id)
+
+                            }
                             style={{
                                 marginTop: '10px',
                                 padding: '8px 12px',
@@ -281,7 +311,7 @@ export default function Cart({setCustomer,setSeller}) {
                                 cursor: 'pointer',
                             }}
                             >
-                        place Order
+                       <MdOutlineShoppingBag style={{ marginRight: "6px" }} /> place Order
                         </button>
                         </div>
                     ))
@@ -308,9 +338,8 @@ export default function Cart({setCustomer,setSeller}) {
                     e.preventDefault();
                     const orderData = {
                     product_name: selectedItem.product_name,
-                    contact:selectedItem.contact,
+                    contact:contact,
                     amount: quantity,
-                    contact: contact,
                     price: (quantity * selectedItem.price).toFixed(2),
                     image_url: selectedItem.image_url,
                     product_id: selectedItem.id,
@@ -323,6 +352,10 @@ export default function Cart({setCustomer,setSeller}) {
                     setOrders(updated);
                     setOrderCount(updated.length)
                     setActiveId(null);
+                    await deleteCartItem(selectedItem.id)
+                    const updatedCart = await fetchCartItems();
+                    setProducts(updatedCart);
+                    setCount(updatedCart.length);
                     } catch (err) {
                     alert("Order failed: " + err.message);
                     }
@@ -345,6 +378,7 @@ export default function Cart({setCustomer,setSeller}) {
                     Contact:
                     <input
                     required
+                    placeholder="enter your phone number"
                     type="text"
                     value={contact}
                     onChange={(e) => setContact(parseInt(e.target.value))}
@@ -365,7 +399,7 @@ export default function Cart({setCustomer,setSeller}) {
                     cursor: "pointer",
                     }}
                 >
-                    Confirm Order
+                  <FaCheckCircle style={{ marginRight: "6px" }} />  Confirm Order
                 </button>
                 <button
                     onClick={() => setActiveId(null)}
@@ -379,7 +413,7 @@ export default function Cart({setCustomer,setSeller}) {
                     cursor: "pointer",
                     }}
                 >
-                    Cancel
+                <MdCancel style={{ marginRight: "6px" }} /> Cancel
                 </button>
                 </form>
             </div>
@@ -447,7 +481,7 @@ export default function Cart({setCustomer,setSeller}) {
                 cursor: "pointer",
                 }}
             >
-                X
+                <FaTimesCircle />
             </button>
 
             </div>

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { fetchProducts,addCartItem } from "../api";
+import { FaShoppingCart, FaCheckCircle} from "react-icons/fa";
+import { MdCategory } from "react-icons/md";
+import { BsTelephoneFill } from "react-icons/bs";
 import NavBar from "./NavBar";
 export default function Dashboard() {
   const [products, setProducts] = useState([]);
   const [productId, setProductId] = useState(null);
   const [allproducts, setAllProducts]=useState([])
-  const [inCart,setInCart]= useState(false)
-  const [active,setActive]=useState(null)
+  const [cartIds, setCartIds] = useState(new Set()); 
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
@@ -53,6 +55,7 @@ export default function Dashboard() {
         alert(res.error);
       } else {
         alert("Added to cart!");
+        setCartIds((prev) => new Set(prev).add(product.id)); 
       }
     } catch (err) {
       alert("Something went wrong: " + err.message);
@@ -79,6 +82,10 @@ export default function Dashboard() {
    <NavBar setProducts={setProducts}/>
       <div style={{backgroundColor:'darkgreen'}}>
          <div className="category-filter" >
+                <h3 style={{ color: "white", paddingLeft: "20px" }}>
+                    <MdCategory style={{ marginRight: "6px" }} />
+                    Browse by Category
+                </h3>
                 <ul>
                     {[
                     'all', 'shoes', 'kids', 'men fashion', 'utility', 'women fashion',
@@ -170,17 +177,13 @@ export default function Dashboard() {
             <h3>
                 <b style={{ color: "darkgreen" }}>ksh</b>: {product.price}
             </h3>
-            {!inCart ? (           
+            {!cartIds.has(product.id)? (           
                 <button
-                    onClick={() => {
+                    onClick={async () => {
                        try{
-                        const res=addToCart(product);
-                        if (res.success){
-                            setInCart(true);
-                            setActive(product.id);
-                        }
+                        const res= await addToCart(product);
                        }catch{
-                          setInCart(false)
+                          alert('error adding to cart')
                        }
                     }}
                     style={{
@@ -193,15 +196,16 @@ export default function Dashboard() {
                         cursor: 'pointer',
                     }}
                 >
+                    <FaShoppingCart style={{ marginRight: "5px" }} />
                     Add to Cart
                 </button>
-            ) : (
-                active === product.id && (
-                    <p style={{ marginTop: '10px', color: 'green', fontWeight: 'bold' }}>In Cart</p>
+            ) :  (
+                    <p style={{ marginTop: '10px', color: 'green', fontWeight: 'bold' }}>
+                     <FaCheckCircle style={{ marginRight: '5px' }} />   In Cart</p>
                 )
-            )}
+            }
             <h3>
-                <b style={{ color: "darkgreen" }}>contact</b>: 0{product.contact}
+                <b style={{ color: "darkgreen" }}><BsTelephoneFill style={{ marginRight: "6px", color: "darkgreen" }} />contact</b>: 0{product.contact}
             </h3>
             </div>
         ))}

@@ -4,14 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
-
+from datetime import timedelta
 import os
 
 app = Flask(__name__)
 app.secret_key = "muriukimunene"
 app.config["SESSION_COOKIE_SECURE"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "None"
-
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 CORS(app, supports_credentials=True)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchSellerProducts,sellerLogout,addProduct,updateProduct,deleteProduct,fetchSellerOrders} from "../api";
 import NavBar from "./NavBar";
+import { FaSignOutAlt, FaPlusCircle, FaTrash, FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 export default function Seller({setSeller}) {
   const [products,setProducts]=useState([])
@@ -85,7 +86,7 @@ export default function Seller({setSeller}) {
                      className="filter-item"
                      style={{backgroundColor:'darkred'}}
                      onClick={handleLogout}>
-                        Log Out
+                    <FaSignOutAlt style={{ marginRight: '6px' }} />Log Out
                     </li>
                     {[
                     'My-Products', `Placed-Orders : ${sellersOrders.length}`,'Add New Product','DashBoard'
@@ -170,7 +171,6 @@ export default function Seller({setSeller}) {
                         <h3>{order.product_name}</h3>
                         <p>Quantity: {order.amount}</p>
                         <p><strong>Total:</strong> Ksh {order.price}</p>
-                        
                     </div>
                     ))
                 ) : (
@@ -243,7 +243,7 @@ export default function Seller({setSeller}) {
                                     cursor: 'pointer',
                                 }}
                                 >
-                            Delete Product
+                             <FaTrash style={{ marginRight: '6px' }} /> Delete Product
                             </button><br/>
                             <button
                                 onClick={() =>
@@ -259,7 +259,7 @@ export default function Seller({setSeller}) {
                                     cursor: 'pointer',
                                 }}
                                 >
-                            edit
+                            <FaEdit style={{ marginRight: '6px' }} />edit
                             </button>
                             </div>
                         ))
@@ -279,7 +279,7 @@ export default function Seller({setSeller}) {
                     minWidth: "350px",
                     }}
                 >
-                    <h2 style={{ marginBottom: "15px" }}>Edit Product</h2>
+                    <h2 style={{ marginBottom: "15px" }}><FaEdit style={{ marginRight: "6px" }} />Edit Product</h2>
                     <form
                     onSubmit={async (e) => {
                         e.preventDefault();
@@ -307,7 +307,7 @@ export default function Seller({setSeller}) {
                     >
                     <img
                         src={selectedItem.image_url}
-                        alt={selectedItem.product_name}
+                        alt={product_name}
                         style={{
                         height: "200px",
                         width: "200px",
@@ -318,7 +318,7 @@ export default function Seller({setSeller}) {
                     <input
                         type="text"
                         placeholder="Product Name"
-                        value={selectedItem.product_name}
+                        value={product_name}
                         onChange={(e) => setProductName(e.target.value)}
                         required
                         style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
@@ -326,7 +326,7 @@ export default function Seller({setSeller}) {
                     <input
                         type="number"
                         placeholder="Price (Ksh)"
-                        value={selectedItem.price}
+                        value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         min={0}
                         required
@@ -335,7 +335,7 @@ export default function Seller({setSeller}) {
                     <input
                         type="text"
                         placeholder="Description"
-                        value={selectedItem.description}
+                        value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         required
                         style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
@@ -343,7 +343,7 @@ export default function Seller({setSeller}) {
                     <input
                         type="number"
                         placeholder="Quantity"
-                        value={selectedItem.quantity}
+                        value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
                         required
                         style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
@@ -351,7 +351,7 @@ export default function Seller({setSeller}) {
                      <input
                         type="text"
                         placeholder="phone No"
-                        value={selectedItem.contact}
+                        value={contact}
                         onChange={(e) => setContact(parseInt(e.target.value))}
                         required
                         style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
@@ -359,7 +359,7 @@ export default function Seller({setSeller}) {
                     <input
                         type="text"
                         placeholder="Image URL"
-                        value={selectedItem.image_url}
+                        value={image_url}
                         onChange={(e) => setImageUrl(e.target.value)}
                         style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
                     />
@@ -508,7 +508,7 @@ export default function Seller({setSeller}) {
                             cursor: "pointer",
                         }}
                         >
-                        Add Product
+                        <FaPlusCircle style={{ marginRight: '6px' }} />Add Product
                         </button>
                         <button
                         type="button"
