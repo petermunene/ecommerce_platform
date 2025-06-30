@@ -341,7 +341,7 @@ export default function Cart({setCustomer,setSeller}) {
                     product_name: selectedItem.product_name,
                     contact:contact,
                     amount: quantity,
-                    price: (quantity * selectedItem.price).toFixed(2),
+                    price: Number((quantity * selectedItem.price).toFixed(2)),
                     image_url: selectedItem.image_url,
                     product_id: selectedItem.id,
                     
