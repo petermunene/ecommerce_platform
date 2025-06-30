@@ -58,16 +58,7 @@ export default function Seller({setSeller}) {
   
     fetchSellerData();
   }, []);
-  useEffect(() => {
-    if (selectedItem) {
-      setProductName(selectedItem.product_name);
-      setPrice(selectedItem.price);
-      setQuantity(selectedItem.quantity);
-      setDescription(selectedItem.description);
-      setImageUrl(selectedItem.image_url);
-      setContact(selectedItem.contact);
-    }
-  }, [selectedItem]);
+  
   async function deleteItem(id){
     try{
         deleteProduct(id)
@@ -79,6 +70,16 @@ export default function Seller({setSeller}) {
     }
   }
   const selectedItem = (products.length>0) ? products.find((p)=>p.id===activeId):null
+  useEffect(() => {
+    if (selectedItem) {
+      setProductName(selectedItem.product_name);
+      setPrice(selectedItem.price);
+      setQuantity(selectedItem.quantity);
+      setDescription(selectedItem.description);
+      setImageUrl(selectedItem.image_url);
+      setContact(selectedItem.contact);
+    }
+  }, [selectedItem]);
   const handleLogout = () => {
     sellerLogout()
     localStorage.removeItem("seller");
