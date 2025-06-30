@@ -108,7 +108,7 @@ class OrderResource(Resource):
         customer = Customer.query.get(customer_id)
         orders = customer.orders
 
-        return [o.to_dict(only=('product_name','amount','price','image_url','contact'))for o in orders],200
+        return [o.to_dict(only=('id','product_name','amount','price','image_url','contact'))for o in orders],200
 class OrderEdit(Resource):
     def delete(self,id):
         if 'customer_id' not in session:

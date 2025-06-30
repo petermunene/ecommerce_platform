@@ -221,6 +221,7 @@ export default function Cart({setCustomer,setSeller}) {
                                     }
                             }}
                             style={{
+                                
                                 marginTop: '10px',
                                 padding: '8px 12px',
                                 backgroundColor: 'darkred',
