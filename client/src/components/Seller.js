@@ -58,11 +58,21 @@ export default function Seller({setSeller}) {
   
     fetchSellerData();
   }, []);
+  useEffect(() => {
+    if (selectedItem) {
+      setProductName(selectedItem.product_name);
+      setPrice(selectedItem.price);
+      setQuantity(selectedItem.quantity);
+      setDescription(selectedItem.description);
+      setImageUrl(selectedItem.image_url);
+      setContact(selectedItem.contact);
+    }
+  }, [selectedItem]);
   async function deleteItem(id){
     try{
         deleteProduct(id)
         alert('product deleted')
-        const updated=await fetchSellerOrders()
+        const updated=await fetchSellerProducts()
         setProducts(updated)
     }catch(err) {
        alert(err.message)
@@ -292,7 +302,7 @@ export default function Seller({setSeller}) {
                         image_url,
                         };
                         try {
-                        await updateProduct(newProduct);
+                        await updateProduct(selectedItem.id,newProduct);
                         alert("Product updated successfully!");
                         setActiveId(null);
                         // optionally refresh product list
