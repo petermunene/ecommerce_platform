@@ -2,27 +2,24 @@ import React, { useEffect, useState } from "react";
 import { fetchProducts, addCartItem } from "../api";
 import { FaShoppingCart, FaCheckCircle, FaBars } from "react-icons/fa";
 import NavBar from "./NavBar";
+import { useNavigate } from "react-router-dom";
 
 const ads = [
   { text: "🎉 Big Sale Today! Free delivery on all orders!", bg: "#ffd700" },
   { text: "🔥 New Arrivals in Fashion & Electronics!", bg: "#ff9999" },
   { text: "🚚 Fast & Secure M-Pesa Payments!", bg: "#b3f0ff" },
 ];
-function checkIfCustomerLoggedin() {
-  navigate(customer ? '/cart' : '/customerLogin');
-}
 
-function checkIfSellerLoggedin() {
-  navigate(seller ? '/seller' : '/sellerLogin');
-}
 export default function Dashboard() {
+  const [customer] = useState(localStorage.getItem("customer") === "true");
+  const [seller] = useState(localStorage.getItem("seller") === "true");
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [cartIds, setCartIds] = useState(new Set());
   const [productId, setProductId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adIndex, setAdIndex] = useState(0);
-
+  const navigate=useNavigate()
   useEffect(() => {
     fetchProducts()
       .then(resp => {
@@ -46,7 +43,13 @@ export default function Dashboard() {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-
+  function checkIfCustomerLoggedin() {
+    navigate(customer ? '/cart' : '/customerLogin');
+  }
+  
+  function checkIfSellerLoggedin() {
+    navigate(seller ? '/seller' : '/sellerLogin');
+  }
   const addToCart = async (product) => {
     const res = await addCartItem({
       product_name: product.product_name,
