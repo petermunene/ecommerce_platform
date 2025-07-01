@@ -8,7 +8,13 @@ const ads = [
   { text: "🔥 New Arrivals in Fashion & Electronics!", bg: "#ff9999" },
   { text: "🚚 Fast & Secure M-Pesa Payments!", bg: "#b3f0ff" },
 ];
+function checkIfCustomerLoggedin() {
+  navigate(customer ? '/cart' : '/customerLogin');
+}
 
+function checkIfSellerLoggedin() {
+  navigate(seller ? '/seller' : '/sellerLogin');
+}
 export default function Dashboard() {
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -124,8 +130,8 @@ export default function Dashboard() {
             <li
               key={i}
               onClick={() => {
-                if (c === "My Activity") window.location.href = "/cart";
-                else if (c === "My Shop") window.location.href = "/seller";
+                if (c === "My Activity") checkIfCustomerLoggedin();
+                else if (c === "My Shop") checkIfSellerLoggedin();
                 else {
                   setProducts(
                     c === "all"
