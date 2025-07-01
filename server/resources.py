@@ -159,7 +159,7 @@ class CartItemResource(Resource):
             return {'error':"couldn't find user"},401
         cart_items= customer.cart_items
 
-        return [c.to_dict(only=('product_name','amount','price','image_url','id','contact'))for c in cart_items],200
+        return [c.to_dict(only=('product_name','amount','price','image_url','id','contact','product_id'))for c in cart_items],200
 class CartListItem(Resource):
     def delete(self,id):
         if 'customer_id' not in session:
@@ -212,16 +212,25 @@ class ProductList(Resource):
 class SellerOrder(Resource):
     def get(self):
         if 'seller_id' not in session:
-            return {'error':'you must be logged in to get all the orders for your products'},401
-        seller_id=session.get('seller_id')
-        seller=Seller.query.get(seller_id)
-        products=seller.products
-        orders=[]
-        if products:
-            for p in products :
-                for order in p.orders:
-                    orders.append(order)
-        return [o.to_dict(only=('id','product_name', 'amount', 'price', 'image_url','contact')) for o in orders],200
+            return {'error': 'You must be logged in to get your product orders.'}, 401
+
+        seller_id = session.get('seller_id')
+        seller = Seller.query.get(seller_id)
+        if not seller:
+            return {'error': 'Seller not found.'}, 404
+
+        orders = []
+        for product in seller.products:
+            # Ensure order list is evaluated in case of lazy='dynamic'
+            product_orders = product.orders
+            if hasattr(product_orders, 'all'):
+                product_orders = product_orders.all()
+            for order in product_orders:
+                orders.append(order.to_dict(only=(
+                    'id', 'product_name', 'amount', 'price', 'image_url', 'contact'
+                )))
+
+        return orders, 200
 class SellerEdit(Resource):
     def delete(self,id):
         if 'seller_id' not in session:
